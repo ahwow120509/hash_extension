@@ -1,7 +1,7 @@
 # hash_extension
 ## A Demo and Tutorial for Creating  Scratch 2 Extensions For The Raspberry Pi
 ## This project use this Code to Fix to hash_extension
-![](https://github.com/MrYsLab/s2-pi/blob/master/docs/images/logo.png)
+![](https://github.com/ahwow120509/hash_extension/blob/master/docs/images/logo.png)
 
 To install type:
 
