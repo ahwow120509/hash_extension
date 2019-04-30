@@ -94,10 +94,6 @@
                 "command": 'input', 'pin': pin
             });
             window.socket.send(msg);
-            var msg = JSON.stringify({
-                "albert": 'input', 'pin': pin
-            });
-            window.socket.send(msg);
         }
     };
 
@@ -198,20 +194,6 @@
         }
     };
 
-    // when the digital read reporter block is executed
-    ext.Ultra_sonic = function (echo,trig) {
-        if (connected == false) {
-            alert("Server Not Connected");
-        }
-        // validate the pin number for the mode
-        if (validatePin(echo)) {
-            var msg = JSON.stringify({
-                "command": 'Ultra_sonic', 'echo': echo, 'trig': trig
-            });
-            window.socket.send(msg);
-        }
-    };
-
     // general function to validate the pin value
     function validatePin(pin) {
         var rValue = true;
@@ -239,8 +221,7 @@
             [" ", "Set BCM PWM Out %n to %n", "analog_write", "PIN", "VAL"],
 			[" ", "Set BCM %n as Servo with angle = %n (0° - 180°)", "servo", "PIN", "0"],     // ***Hackeduca --> Block for Servo 			
             [" ", "Tone: BCM %n HZ: %n", "play_tone", "PIN", 1000],
-            ["r", "XRead Digital Pin %n", "digital_read", "PIN"],
-            ["r", "Ultra_sonic echo %n trig %n", "Ultra_sonic", "PIN","PIN"]
+            ["r", "Read Digital Pin %n", "digital_read", "PIN"]
 
         ],
         "menus": {

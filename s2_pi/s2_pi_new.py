@@ -46,19 +46,6 @@ class S2Pi(WebSocket):
             self.pi.set_glitch_filter(pin, 20000)
             self.pi.set_mode(pin, pigpio.INPUT)
             self.pi.callback(pin, pigpio.EITHER_EDGE, self.input_callback)
-        #------
-        elif client_cmd == 'Ultra_sonic':
-            echo = int(payload['echo'])
-            #self.pi.set_glitch_filter(echo, 20000)
-            #self.pi.set_mode(echo, pigpio.INPUT)
-            #self.pi.callback(echo, pigpio.EITHER_EDGE, self.input_callback) 
-            trig = int(payload['trig'])
-            #self.pi.set_glitch_filter(trig, 20000)
-            #self.pi.set_mode(trig, pigpio.INPUT)
-            #self.pi.callback(trig, pigpio.EITHER_EDGE, self.input_callback) 
-             
-            print('Ultra_sonic test OK~')
-        #------  
         # when a user wishes to set the state of a digital output pin
         elif client_cmd == 'digital_write':
             pin = int(payload['pin'])

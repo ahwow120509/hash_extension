@@ -50,6 +50,7 @@ class S2Pi(WebSocket):
         elif client_cmd == 'Ultra_sonic':
             
             pin_trig = int(payload['pin_trig'])
+            
             self.pi.set_mode(pin_trig, pigpio.OUTPUT)
             self.pi.write(pin_trig, 1)
             time.sleep(0.001)
@@ -57,15 +58,16 @@ class S2Pi(WebSocket):
             pin_echo = int(payload['pin_echo'])
             self.pi.set_glitch_filter(pin_echo, 20000)
             self.pi.set_mode(pin_echo, pigpio.INPUT)
-            #self.pi.callback(pin, pigpio.EITHER_EDGE, self.input_callback)
-            
             wait_for_echo(pin_echo,True, 5000)
             start = time.time()
             wait_for_echo(pin_echo,False, 5000)
             finish = time.time()
             pulse_len = finish - start
             distance_cm = pulse_len * 340 *100 /2
-            msg = json.dumps(distance_cm)
+
+            payload = {'Ultra_sonic': 'Ultra_sonic', 'distance_cm': str(distance_cm)}
+            print('callback', payload)
+            msg = json.dumps(payload)
             self.sendMessage(msg)
 
             
@@ -86,6 +88,7 @@ class S2Pi(WebSocket):
             self.pi.set_PWM_dutycycle(pin, value)
 
         elif client_cmd == 'servo':
+            
             # HackEduca ---> When a user wishes to set a servo:
             # Using SG90 servo:
             # 180° = 2500 Pulses; 0° = 690 Pulses
@@ -104,6 +107,7 @@ class S2Pi(WebSocket):
             # pi.set_servo_pulse_width(23, Pulse)
             # pi.stop()
             # <------------------------<<<<<
+
             pin = int(payload['pin'])
             self.pi.set_mode(pin, pigpio.OUTPUT)
             value = int(payload['value'])
