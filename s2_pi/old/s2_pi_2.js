@@ -69,6 +69,7 @@
         };
     };
 
+
     // Cleanup function when the extension is unloaded
     ext._shutdown = function () {
         var msg = JSON.stringify({
@@ -115,9 +116,11 @@
 
     // when the PWM block is executed
     ext.analog_write = function (pin, value) {
+        
         if (connected == false) {
             alert("Server Not Connected");
         }
+
         console.log("analog write");
         // validate the pin number for the mode
         if (validatePin(pin)) {
