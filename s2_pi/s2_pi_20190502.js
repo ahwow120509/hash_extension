@@ -58,6 +58,10 @@
                 var pin = msg['pin'];
                 digital_inputs[parseInt(pin)] = msg['level']
             }
+            if(reporter === 'distance_cm') {
+                var pin = msg['pin'];
+                digital_inputs[parseInt(pin)] = msg['level']
+            }
             console.log(message.data)
         };
         window.socket.onclose = function (e) {
@@ -94,23 +98,14 @@
                 "command": 'input', 'pin': pin
             });
             window.socket.send(msg);
-        }
-    };
-    // when the connect to server block is executed
-    ext.sonic_input = function (pin) {
-        if (connected == false) {
-            alert("Server Not Connected");
-        }
-        // validate the pin number for the mode
-        if (validatePin(pin)) {
             var msg = JSON.stringify({
-                "command": 'sonic_input', 'pin': pin
+                "albert": 'input', 'pin': pin
             });
             window.socket.send(msg);
         }
     };
+
     // when the digital write block is executed
-    
     ext.digital_write = function (pin, state) {
         if (connected == false) {
             alert("Server Not Connected");
@@ -125,20 +120,7 @@
             window.socket.send(msg);
         }
     };
-    ext.sonic_trig = function (pin) {
-        if (connected == false) {
-            alert("Server Not Connected");
-        }
-        console.log("sonic_trig");
-        // validate the pin number for the mode
-        if (validatePin(pin)) {
-            var msg = JSON.stringify({
-                "command": 'sonic_trig', 'pin': pin
-            });
-            console.log(msg);
-            window.socket.send(msg);
-        }
-    };
+
     // when the PWM block is executed
     ext.analog_write = function (pin, value) {
         if (connected == false) {
@@ -219,15 +201,24 @@
 
         }
     };
-    ext.Ultra_sonic_read = function (pin) {
+
+    // when the digital read reporter block is executed
+    ext.Ultra_sonic = function (echo,trig) {
         if (connected == false) {
             alert("Server Not Connected");
         }
-        else {
-                return digital_inputs[parseInt(pin)]
+        // validate the pin number for the mode
+        if (validatePin(echo)) {
 
+            
+            var msg = JSON.stringify({
+                "command": 'Ultra_sonic', 'echo': echo, 'trig': trig
+            });
+            window.socket.send(msg);
+            return digital_inputs[parseInt(pin)]
         }
     };
+
     // general function to validate the pin value
     function validatePin(pin) {
         var rValue = true;
@@ -251,14 +242,12 @@
             // Block type, block name, function name
             ["w", 'Connect to s2_pi server.', 'cnct'],
             [" ", 'Set BCM %n as an Input', 'input','PIN'],
-            [" ", 'Set Ultra_sonic Echo %n as an Input', 'sonic_input','PIN'],
-            [" ", "Set Ultra_sonic Trig", "sonic_trig"],
             [" ", "Set BCM %n Output to %m.high_low", "digital_write", "PIN", "0"],
             [" ", "Set BCM PWM Out %n to %n", "analog_write", "PIN", "VAL"],
 			[" ", "Set BCM %n as Servo with angle = %n (0° - 180°)", "servo", "PIN", "0"],     // ***Hackeduca --> Block for Servo 			
             [" ", "Tone: BCM %n HZ: %n", "play_tone", "PIN", 1000],
             ["r", "Read Digital Pin %n", "digital_read", "PIN"],
-            ["r", "Ultra_sonic Echo Pin %n", "Ultra_sonic_read", "PIN"]
+            ["r", "Ultra_sonic echo %n trig %n", "Ultra_sonic", "PIN","PIN"]
 
         ],
         "menus": {

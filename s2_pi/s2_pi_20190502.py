@@ -46,18 +46,32 @@ class S2Pi(WebSocket):
             self.pi.set_glitch_filter(pin, 20000)
             self.pi.set_mode(pin, pigpio.INPUT)
             self.pi.callback(pin, pigpio.EITHER_EDGE, self.input_callback)
-        elif client_cmd == 'sonic_input':
-            pin = int(payload['pin'])
-            self.pi.set_glitch_filter(pin, 20000)
-            self.pi.set_mode(pin, pigpio.INPUT)
-            self.pi.callback(pin, pigpio.EITHER_EDGE, self.input_callback)
-        elif client_cmd == 'sonic_trig':
-            pin = int(payload['pin'])
-            self.pi.set_mode(pin, pigpio.OUTPUT)
-            self.pi.write(pin, 1)
+        #------
+        elif client_cmd == 'Ultra_sonic':
+            trig = int(payload['trig'])
+            self.pi.set_mode(trig, pigpio.OUTPUT)
+            self.pi.write(trig, 1)
             time.sleep(0.001)
-            self.pi.write(pin, 0)
-            
+            self.pi.write(trig, 0)
+
+            echo = int(payload['echo'])
+            self.pi.set_glitch_filter(echo, 20000)
+            self.pi.set_mode(echo, pigpio.INPUT)
+            start = time.time()
+            finish = time.time()
+            pulse_len = finish - start
+            #distance_cm = pulse_len * 340 *100 /2
+            distance_cm = 100
+            payload = {'report': 'distance_cm', 'pin': str(echo), 'level': str(distance_cm)}
+            #print('callback', payload)
+            msg = json.dumps(payload)
+            self.sendMessage(msg) 
+            #self.pi.callback(echo, pigpio.EITHER_EDGE, self.input_callback) 
+           
+            #self.pi.callback(trig, pigpio.EITHER_EDGE, self.input_callback) 
+             
+            print('Ultra_sonic test OK~')
+        #------  
         # when a user wishes to set the state of a digital output pin
         elif client_cmd == 'digital_write':
             pin = int(payload['pin'])
@@ -67,8 +81,6 @@ class S2Pi(WebSocket):
                 self.pi.write(pin, 0)
             else:
                 self.pi.write(pin, 1)
-
-        
         # when a user wishes to set a pwm level for a digital input pin
         elif client_cmd == 'analog_write':
             pin = int(payload['pin'])
@@ -135,8 +147,7 @@ class S2Pi(WebSocket):
         payload = {'report': 'digital_input_change', 'pin': str(pin), 'level': str(level)}
         print('callback', payload)
         msg = json.dumps(payload)
-        self.sendMessage(msg)
-
+        self.sendMessage(msg)      
     def handleConnected(self):
         self.pi = pigpio.pi()
         print(self.address, 'connected')
